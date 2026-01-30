@@ -1,0 +1,21 @@
+import 'package:courier/routes/app_routes.dart';
+import 'package:flutter/material.dart';
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'App Encomiendas',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+
+      // Rutas
+      initialRoute: AppRoutes.fontPage,
+      routes: AppRoutes.routes,
+    );
+  }
+}
