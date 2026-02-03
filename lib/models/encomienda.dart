@@ -1,63 +1,87 @@
 class Encomienda{
   String? id;
-  String serieRemito;
-  String agenciaOrigen;
-  String agenciaDestino;
+  String? serieRemito;
+  String? agenciaOrigen;
+  String? agenciaDestino;
+  int? idAgenciaDestino;
   
-  String remitente;
-  String remitenteDocumento;
-  String remitenteDireccion;
+  int? idRemitente;
+  String? remitente;
+  String? remitenteDocumento;
+  String? remitenteDireccion;
+  String? remitenteContacto;
   String? remitenteCelular;
+  int? remitenteIdDistritoDomicilio;
 
-  String destinatario;
-  String destinatarioDocumento;
-  String destinatarioDireccion;
+  int? idDestinatario;
+  String? destinatario;
+  String? destinatarioDocumento;
+  String? destinatarioDireccion;
+  String? destinatarioContacto;
   String? destinatarioCelular;
+  int? destinatarioIdDistritoDomicilio;
 
-  String tipoPago;
-  String tipoEntrega;
+  String? tipoPago;
+  String? tipoEntrega;
   String? costoTotal;
   String? kg;
-  String fecha;
-  String fechaEntrega;
-  String cantidad;
-  String medio;
-  String observacion;
-  String ultimoEstado;
-  String colorEstado;
+  String? fecha;
+  String? fechaEntrega;
+  String? cantidad;
+  String? medio;
+  String? observacion;
+  String? guiaRemitente;
+  String? ultimoEstado;
+  String? colorEstado;
   String? motorizado;
-  int cantidadTotal;
+  int? cantidadTotal;
+
+  String? banco;
+  String? nroOperacion;
+
+  String? tipoEnvio;
   
   Encomienda({
     this.id,
-    required this.serieRemito,
-    required this.agenciaOrigen,
-    required this.agenciaDestino,
+    this.serieRemito,
+    this.agenciaOrigen,
+    this.agenciaDestino,
+    this.idAgenciaDestino,
 
-    required this.remitente,
-    required this.remitenteDocumento,
-    required this.remitenteDireccion,
+    this.idRemitente,
+    this.remitente,
+    this.remitenteDocumento,
+    this.remitenteDireccion,
+    this.remitenteContacto,
     this.remitenteCelular,
+    this.remitenteIdDistritoDomicilio,
 
-    required this.destinatario,
-    required this.destinatarioDocumento,
-    required this.destinatarioDireccion,
+    this.idDestinatario,
+    this.destinatario,
+    this.destinatarioDocumento,
+    this.destinatarioDireccion,
+    this.destinatarioContacto,
     this.destinatarioCelular,
+    this.destinatarioIdDistritoDomicilio,
 
-    required this.tipoPago,
-    required this.tipoEntrega,
+    this.tipoPago,
+    this.tipoEntrega,
+    this.tipoEnvio,
     this.costoTotal,
     this.kg,
-    required this.fecha,
-    required this.fechaEntrega,
-    required this.cantidad,
-    required this.medio,
-    required this.observacion,
-    required this.ultimoEstado,
-    required this.colorEstado,
+    this.fecha,
+    this.fechaEntrega,
+    this.cantidad,
+    this.medio,
+    this.observacion,
+    this.guiaRemitente,
+    this.ultimoEstado,
+    this.colorEstado,
     this.motorizado,
-    required this.cantidadTotal,
+    this.cantidadTotal,
 
+    this.banco,
+    this.nroOperacion,
   });
 
   factory Encomienda.fromJson(Map<String, dynamic> json){
@@ -91,6 +115,35 @@ class Encomienda{
       motorizado: json['motorizado'],
       cantidadTotal: json['cantidad_total'],
     );
+  }
+
+  Map<String, dynamic> toJson(){
+    return{
+      "tipo_entrega": tipoEntrega,
+      "tipo_envio": tipoEnvio,
+      "id_agencia_destino": idAgenciaDestino,
+      "remitente_id": idRemitente,
+      "remitente_documento": remitenteDocumento, 
+      "remitente_direccion": remitenteDireccion,
+      "remitente_contacto_nombre": remitenteContacto,
+      "remitente_contacto_celular": remitenteCelular,
+      "remitente_id_distrito_a_domicilio": remitenteIdDistritoDomicilio,//si el origen es domicilio (tipo entrega)
+      "destinatario_id": idDestinatario,
+      "destinatario_documento": destinatarioDocumento,
+      "destinatario_contacto_nombre": destinatarioContacto,
+      "destinatario_contacto_celular": destinatarioCelular,
+      "destinatario_direccion": destinatarioDireccion,
+      "destinatario_id_distrito_a_domicilio": destinatarioIdDistritoDomicilio,//si el destino es domicilio (tipo entrega)
+      "fecha_entrega": fechaEntrega,
+      "costo_total": costoTotal,
+      "cantidad": cantidad,  
+      "kilos": kg,
+      "observacion": observacion,
+      "tipo_pago": tipoPago,
+      "guia_remitente": guiaRemitente,
+      "banco": banco, //condicional tipo pago deposito
+      "nro_operacion": nroOperacion //condicional tipo pago deposito
+    };
   }
 
   @override

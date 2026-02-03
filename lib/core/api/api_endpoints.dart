@@ -25,6 +25,7 @@ class ApiEndpoints {
 
   // Encomiendas
   static const String encomiendas = '/encomienda/getEncomiendas';
+  static const String createEncomienda = '/encomienda/createEncomienda';
   static const String historialEstados = '/encomienda/getHistorialEstados';
   static const String estadoDisponibles = '/encomienda/getEstadosDisponibles';
   static const String newEstado = '/encomienda/addEstadoEncomienda';

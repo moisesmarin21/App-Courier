@@ -43,6 +43,22 @@ class EncomiendasProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> createEncomienda(Encomienda encomienda) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      await _service.createEncomienda(encomienda);
+    } catch (e) {
+      _error = e.toString();
+      rethrow;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
   Future<void> getHistorialEstados(String idEncomienda) async {
     _isLoading = true;
     _error = null;

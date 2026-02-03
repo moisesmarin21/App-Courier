@@ -10,6 +10,7 @@ class AppTextFormField extends StatelessWidget {
   final TextInputType? keyboardType;
   final List<TextInputFormatter>? inputFormatters;
   final bool requiredField;
+  final bool? enabled;
 
   const AppTextFormField({
     super.key,
@@ -19,6 +20,7 @@ class AppTextFormField extends StatelessWidget {
     this.keyboardType,
     this.inputFormatters,
     this.requiredField = true,
+    this.enabled,
   });
 
   @override
@@ -27,6 +29,7 @@ class AppTextFormField extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 10),
       child: TextFormField(
         controller: controller,
+        enabled: enabled,
         style: AppStyles.label,
         keyboardType: keyboardType,
         maxLength: maxLength,

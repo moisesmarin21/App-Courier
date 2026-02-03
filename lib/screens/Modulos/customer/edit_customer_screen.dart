@@ -31,6 +31,7 @@ class _EditCustomerScreenState extends State<EditCustomerScreen> {
   late final TextEditingController _referenciaCtrl;
   late final TextEditingController _tipoClienteCtrl;
   late final TextEditingController _tipoPagoCtrl;
+  late final TextEditingController _diasCtrl;
   late final TextEditingController _igvCtrl;
   late final TextEditingController _tipoDetraccionCtrl;
   late final TextEditingController _planCtrl;
@@ -38,6 +39,8 @@ class _EditCustomerScreenState extends State<EditCustomerScreen> {
   late final TextEditingController _extraDomAgeCtrl;
   late final TextEditingController _extraAgeDomCtrl;
   late final TextEditingController _celularCtrl;
+
+  late List<Direccion> direcciones;
 
   String? _departamentoValue;
   String? _provinciaValue;
@@ -158,6 +161,26 @@ class _EditCustomerScreenState extends State<EditCustomerScreen> {
     });
   }
 
+  void _initTipoPago(String? rawTipoPago) {
+    if (rawTipoPago == null || rawTipoPago.isEmpty) {
+      _tipoPagoCtrl.text = '';
+      _diasCtrl.text = '';
+      return;
+    }
+
+    if (!rawTipoPago.contains('_')) {
+      // contado
+      _tipoPagoCtrl.text = rawTipoPago;
+      _diasCtrl.text = '';
+      return;
+    }
+
+    final parts = rawTipoPago.split('_');
+
+    _tipoPagoCtrl.text = parts.first; // credito
+    _diasCtrl.text = parts.length > 1 ? parts[1] : '';
+  }
+
   void _initControllers(Customer c, ConfiguracionesProvider config) {
     _nroDocumentoCtrl = TextEditingController(text: c.nroDocumento ?? '');
     _razonSocialCtrl = TextEditingController(text: c.nombres ?? '');
@@ -173,6 +196,19 @@ class _EditCustomerScreenState extends State<EditCustomerScreen> {
     _distritoCtrl =
         TextEditingController(text: c.distritoNombre ?? '');
 
+    final seen = <String>{};
+
+    direcciones = c.direcciones
+        .where((d) => d.direccion != null && d.direccion!.trim().isNotEmpty)
+        .where((d) => seen.add(d.direccion!.trim()))
+        .map(
+          (d) => Direccion(
+            direccion: d.direccion!.trim(),
+            referencia: d.referencia?.trim(),
+          ),
+        )
+        .toList();
+
     _direccionCtrl = TextEditingController(
       text: c.direcciones.isNotEmpty ? c.direcciones.last.direccion : '',
     );
@@ -182,7 +218,10 @@ class _EditCustomerScreenState extends State<EditCustomerScreen> {
     );
 
     _tipoClienteCtrl = TextEditingController(text: c.tipoCliente ?? '');
-    _tipoPagoCtrl = TextEditingController(text: c.tipoPago ?? '');
+
+    _tipoPagoCtrl = TextEditingController();
+    _diasCtrl = TextEditingController();
+    _initTipoPago(c.tipoPago);
 
     _igvCtrl = TextEditingController(
       text: c.igv == 1 ? 'Si' : 'No',
@@ -329,16 +368,19 @@ class _EditCustomerScreenState extends State<EditCustomerScreen> {
             child: Column(
               children: [
                 CustomerForm(
+                isEdit: true,
                 formKey: _formKey,
                 nroDocumento: _nroDocumentoCtrl,
                 razonSocial: _razonSocialCtrl,
                 departamento: _departamentoCtrl,
                 provincia: _provinciaCtrl,
                 distrito: _distritoCtrl,
+                direcciones: direcciones,
                 direccion: _direccionCtrl,
                 referencia: _referenciaCtrl,
                 tipoCliente: _tipoClienteCtrl,
                 tipoPago: _tipoPagoCtrl,
+                dias: _diasCtrl,
                 igv: _igvCtrl,
                 tipoDetraccion: _tipoDetraccionCtrl,
                 plan: _planCtrl,

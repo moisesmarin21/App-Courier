@@ -8,10 +8,18 @@ class AppTextField extends StatelessWidget {
   final String? hintText;
   final bool obscure;
   final bool? enabled;
-  
+  final EdgeInsetsGeometry? padding;
+
   final int? maxLength;
   final TextInputType? keyboardType;
   final List<TextInputFormatter>? inputFormatters;
+
+  final ValueChanged<String>? onChanged;
+  final Widget? suffixIcon;
+
+  // 👉 NUEVOS
+  final FocusNode? focusNode;
+  final VoidCallback? onTap;
 
   const AppTextField({
     super.key,
@@ -19,34 +27,45 @@ class AppTextField extends StatelessWidget {
     this.hintText,
     this.obscure = false,
     this.enabled = true,
+    this.padding,
     this.maxLength,
     this.inputFormatters,
-    this.keyboardType
+    this.keyboardType,
+    this.onChanged,
+    this.suffixIcon,
+    this.focusNode,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 28),
+      padding: padding ?? const EdgeInsets.only(bottom: 28),
       child: TextField(
         controller: controller,
+        focusNode: focusNode,
         enabled: enabled,
         keyboardType: keyboardType,
         maxLength: maxLength,
         inputFormatters: inputFormatters,
         obscureText: obscure,
+        onChanged: onChanged,
+        onTap: onTap,
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: AppStyles.label,
-          labelStyle: const TextStyle(color: AppColors.primary, fontSize: 16),
+          labelStyle: const TextStyle(
+            color: AppColors.primary,
+            fontSize: 16,
+          ),
+          suffixIcon: suffixIcon,
           counterText: maxLength != null ? '' : null,
-          contentPadding: EdgeInsets.only(bottom: 0, top: 10),
+          contentPadding: const EdgeInsets.only(bottom: 0, top: 10),
           enabledBorder: const UnderlineInputBorder(
             borderSide: BorderSide(
               color: AppColors.primary,
             ),
           ),
-      
           focusedBorder: const UnderlineInputBorder(
             borderSide: BorderSide(
               color: AppColors.primary,

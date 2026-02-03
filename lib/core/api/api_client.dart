@@ -7,7 +7,7 @@ class ApiClient {
   ApiClient() {
     _dio = Dio(
       BaseOptions(
-        baseUrl: 'http://api.eisegmi.facturador.es',
+        baseUrl: 'https://api.eisegmi.facturador.es',
         connectTimeout: const Duration(seconds: 20),
         receiveTimeout: const Duration(seconds: 20),
         headers: {

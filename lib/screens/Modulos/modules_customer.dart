@@ -159,7 +159,7 @@ class _ModulesCustomerState extends State<ModulesCustomer> {
             asset: AppImages.logout,
             option: 'Cerrar Sesión',
             onTap: () {
-              Navigator.pushNamed(context, AppRoutes.login);
+              Navigator.pushReplacementNamed(context, AppRoutes.login);
             },
           ),
         ],

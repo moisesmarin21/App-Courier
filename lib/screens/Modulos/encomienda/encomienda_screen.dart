@@ -328,7 +328,7 @@ class _EncomiendaCard extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
-    String estadoCompleto = encomienda.ultimoEstado;
+    String estadoCompleto = encomienda.ultimoEstado!;
     String estadoSolo = estadoCompleto.split(' ')[0].trim();
     bool esAgencia = estadoSolo == 'AGENCIA';
     String resto = estadoCompleto.split('<br>')[0].trim();
@@ -373,7 +373,7 @@ class _EncomiendaCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  encomienda.serieRemito,
+                  encomienda.serieRemito!,
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -399,12 +399,12 @@ class _EncomiendaCard extends StatelessWidget {
             const SizedBox(height: 10),
             _InfoRow(
               label: 'Remitente',
-              value: encomienda.remitente,
+              value: encomienda.remitente!,
               direccion: encomienda.remitenteDireccion,
             ),
             _InfoRow(
               label: 'Destinatario',
-              value: encomienda.destinatario,
+              value: encomienda.destinatario!,
               direccion: encomienda.destinatarioDireccion,
             ),
             const Divider(height: 20),
@@ -413,13 +413,13 @@ class _EncomiendaCard extends StatelessWidget {
                 Expanded(
                   child: _InfoRow(
                     label: 'Origen',
-                    value: encomienda.agenciaOrigen,
+                    value: encomienda.agenciaOrigen!,
                   ),
                 ),
                 Expanded(
                   child: _InfoRow(
                     label: 'Destino',
-                    value: encomienda.agenciaDestino,
+                    value: encomienda.agenciaDestino!,
                   ),
                 ),
               ],

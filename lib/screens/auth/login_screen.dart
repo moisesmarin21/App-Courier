@@ -65,7 +65,7 @@ class _LoginScreenState extends State<LoginScreen> {
               minHeight: MediaQuery.of(context).size.height,
             ),
             child: Padding(
-              padding: const EdgeInsets.all(30.0),
+              padding: const EdgeInsets.all(20),
               child: FormLogin(
                 onSaveCredentials: _saveCredentials,
                 emailCtrl: emailCtrl,
@@ -204,7 +204,7 @@ class FormLogin extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(top: 24.0, left: 28.0, right: 28.0),
+          padding: const EdgeInsets.only(top: 24.0, left: 16.0, right: 16.0),
           child: auth.isLoading
             ? const CircularProgressIndicator()
             : SizedBox(

@@ -1,6 +1,7 @@
 import 'package:courier/core/constants/app_dropdownButtonFormField2.dart';
 import 'package:courier/core/constants/app_textFormField.dart';
 import 'package:courier/core/constants/spacing.dart';
+import 'package:courier/models/direccion.dart';
 import 'package:courier/models/infoByDocument.dart';
 import 'package:courier/providers/configuraciones_provider.dart';
 import 'package:flutter/material.dart';
@@ -35,6 +36,8 @@ class CustomerForm extends StatefulWidget {
   final List<String> detracciones;
   final List<String> planes;
   final List<String> tiposPago;
+  final bool isEdit;
+  final List<Direccion>? direcciones;
 
   final ValueChanged<String?> onDepartamentoChanged;
   final ValueChanged<String?> onProvinciaChanged;
@@ -44,6 +47,7 @@ class CustomerForm extends StatefulWidget {
 
   const CustomerForm({
     super.key,
+    required this.isEdit,
     required this.formKey,
     required this.nroDocumento,
     required this.razonSocial,
@@ -54,7 +58,6 @@ class CustomerForm extends StatefulWidget {
     required this.referencia,
     required this.tipoCliente,
     required this.tipoPago,
-    this.dias,
     required this.igv,
     required this.tipoDetraccion,
     required this.plan,
@@ -73,6 +76,8 @@ class CustomerForm extends StatefulWidget {
     required this.onProvinciaChanged,
     required this.onDistritoChanged,
     required this.onClienteEncontrado,
+    this.dias,
+    this.direcciones,
   });
 
   @override
@@ -81,6 +86,14 @@ class CustomerForm extends StatefulWidget {
 
 class _CustomerFormState extends State<CustomerForm> {
   bool _esCredito = false;
+  Direccion? _direccionSeleccionada;
+  bool bloquearDropdown = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _esCredito = widget.tipoPago.text == 'credito';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -180,15 +193,73 @@ class _CustomerFormState extends State<CustomerForm> {
             ],
           ),
 
-          AppTextFormField(controller: widget.direccion, label: 'Dirección'),
+          if (widget.isEdit && (widget.direcciones?.isNotEmpty ?? false))
+            Row(
+              children: [
+                Expanded(
+                  child: AppDropdownbuttonformfield2(
+                    padding: const EdgeInsets.only(bottom: 10, top: 10),
+                    label: 'Direcciones',
+                    enabled: !bloquearDropdown,
+                    value: _direccionSeleccionada?.direccion,
+                    options: widget.direcciones!
+                        .map((e) => e.direccion)
+                        .toList(),
+                    onChanged: (value) {
+                      if (value == null) return;
+
+                      final seleccion = widget.direcciones!
+                          .firstWhere((d) => d.direccion == value);
+
+                      setState(() {
+                        _direccionSeleccionada = seleccion;
+                        bloquearDropdown = false;
+                      });
+
+                      widget.direccion.text = seleccion.direccion;
+                      widget.referencia.text = seleccion.referencia ?? '';
+                    },
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      bloquearDropdown = true;
+                      _direccionSeleccionada = null;
+                    });
+
+                    widget.direccion.clear();
+                    widget.referencia.clear();
+                  },
+                  onDoubleTap: () {
+                    setState(() {
+                      bloquearDropdown = false;
+                      _direccionSeleccionada = null;
+                    });
+
+                    widget.direccion.clear();
+                    widget.referencia.clear();
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.all(8),
+                    child: Icon(Icons.add),
+                  ),
+                ),
+              ],
+            ),
+
           AppTextFormField(
-            controller: widget.referencia, 
-            label: 'Referencia',
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.digitsOnly,
-            ],
+            controller: widget.direccion,
+            label: 'Dirección',
+            enabled: !widget.isEdit || bloquearDropdown,
           ),
+
+          AppTextFormField(
+            controller: widget.referencia,
+            label: 'Referencia',
+            enabled: !widget.isEdit || bloquearDropdown,
+          ),
+
           Row(
             children: [
               Expanded(
@@ -214,14 +285,17 @@ class _CustomerFormState extends State<CustomerForm> {
                   controller: widget.tipoPago, 
                   options: widget.tiposPago, 
                   onChanged: (value) {
+                    if (value == null) return;
+
                     setState(() {
-                      widget.tipoPago.text = value!;
+                      widget.tipoPago.text = value;
 
                       _esCredito = value == 'credito';
+
                       if (_esCredito) {
-                        widget.dias!.text = '';
+                        widget.dias?.text = widget.dias?.text ?? '';
                       } else {
-                        widget.dias!.clear();
+                        widget.dias?.clear();
                       }
                     });
                   },

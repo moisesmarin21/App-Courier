@@ -25,11 +25,19 @@ class AppStyles {
     fontSize: 16,
     color: AppColors.textSecondary,
   );
-  
+
   static const TextStyle subtitleBlue = TextStyle(
     fontSize: 16,
     fontWeight: FontWeight.w600,
     color: AppColors.primary,
+  );
+  
+  static const TextStyle subtitleBlueSubrayado = TextStyle(
+    fontSize: 15,
+    fontWeight: FontWeight.w600,
+    color: AppColors.primary,
+    decoration: TextDecoration.underline,
+    decorationColor: AppColors.primary
   );
 
   static const TextStyle subtitleWhite = TextStyle(

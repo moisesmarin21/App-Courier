@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:courier/core/constants/buttons.dart';
 import 'package:courier/core/constants/colors.dart';
 import 'package:courier/core/constants/styles.dart';
+import 'package:courier/core/utils/exit_confirmation.dart';
 import 'package:courier/core/widgets/customer_form.dart';
 import 'package:courier/models/customer.dart';
 import 'package:courier/models/direccion.dart';
@@ -12,7 +13,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class NewCustomerScreen extends StatefulWidget {
-  const NewCustomerScreen({super.key});
+  final bool esAtajo;
+  const NewCustomerScreen({
+    super.key, 
+    this.esAtajo = false,
+  });
 
   @override
   State<NewCustomerScreen> createState() => _NewCustomerScreenState();
@@ -104,7 +109,11 @@ class _NewCustomerScreenState extends State<NewCustomerScreen> {
     );
 
     customers.createCustomer(customer).then((_) {
-      Navigator.pop(context);
+      if (widget.esAtajo) {
+        Navigator.pop(context, _nroDocumentoCtrl.text.trim());
+      } else {
+        Navigator.pop(context);
+      }
     });
   }
 
@@ -188,75 +197,98 @@ class _NewCustomerScreenState extends State<NewCustomerScreen> {
     final config = context.watch<ConfiguracionesProvider>();
     final customer = context.watch<CustomersProvider>();
 
-    return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 80,
-        automaticallyImplyLeading: false,
-        backgroundColor: AppColors.primary,
-        title: Row(
-          children: [
-            IconButton(
-              icon: const Icon(
-                Icons.arrow_back_ios,
-                color: Colors.black,
-                size: 30,
-              ),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-            const SizedBox(width: 1),
-            Text('Nuevo Cliente', style: AppStyles.titleWhite),
-          ],
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              CustomerForm(
-                formKey: _formKey,
-                nroDocumento: _nroDocumentoCtrl,
-                razonSocial: _razonSocialCtrl,
-                departamento: _departamentoCtrl,
-                provincia: _provinciaCtrl,
-                distrito: _distritoCtrl,
-                direccion: _direccionCtrl,
-                referencia: _referenciaCtrl,
-                tipoCliente: _tipoClienteCtrl,
-                tipoPago: _tipoPagoCtrl,
-                dias: _diasCtrl,
-                igv: _igvCtrl,
-                tipoDetraccion: _tipoDetraccionCtrl,
-                plan: _planCtrl,
-                extraDomDom: _extraDomDomCtrl,
-                extraDomAge: _extraDomAgeCtrl,
-                extraAgeDom: _extraAgeDomCtrl,
-                celular: _celularCtrl,
-                departamentos: config.departamentos.map((e) => e.departamento).toList(),
-                provincias: config.provincias.map((e) => e.provincia).toList(),
-                distritos: config.distritos.map((e) => e.distrito).toList(),
-                tiposCliente: customer.customersType.map((e) => e.tipoCliente).toList(),
-                detracciones: config.detracciones.map((e) => e.tipoDetraccion).toList(),
-                planes: config.planes.map((e) => e.plan).toList(),
-                tiposPago: config.tiposPago.map((e) => e.tipoPago).toList(),
-                onDepartamentoChanged: _onDepartamentoChanged,
-                onProvinciaChanged: _onProvinciaChanged,
-                onDistritoChanged: _onDistritoChanged,
-                onClienteEncontrado: _onClienteEncontrado,
-              ),
+    return PopScope(
+        canPop: false,
+        onPopInvoked: (didPop) async {
+          if (didPop) return;
 
-              const SizedBox(height: 20),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: AppButtonStyles.primary,
-                  onPressed: _submitNewCustomer,
-                  child: Text('Crear Cliente'),
+          final salir = await ExitConfirmation.show(
+            context,
+            message: 'Se perderá toda la información llenada en el formulario para nuevo cliente',
+          );
+
+          if (salir) {
+            Navigator.of(context).pop();
+          }
+        },
+      child: Scaffold(
+        appBar: AppBar(
+          toolbarHeight: 80,
+          automaticallyImplyLeading: false,
+          backgroundColor: AppColors.primary,
+          title: Row(
+            children: [
+              IconButton(
+                icon: const Icon(
+                  Icons.arrow_back_ios,
+                  color: Colors.black,
+                  size: 30,
                 ),
+                onPressed: () async {
+                  final salir = await ExitConfirmation.show(
+                    context,
+                    message: 'Se perderá toda la información llenada en el formulario para nuevo cliente',
+                  );
+
+                  if (salir) {
+                    Navigator.of(context).pop();
+                  }
+                },
               ),
+              const SizedBox(width: 1),
+              Text('Nuevo Cliente', style: AppStyles.titleWhite),
             ],
+          ),
+        ),
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                CustomerForm(
+                  isEdit: false,
+                  formKey: _formKey,
+                  nroDocumento: _nroDocumentoCtrl,
+                  razonSocial: _razonSocialCtrl,
+                  departamento: _departamentoCtrl,
+                  provincia: _provinciaCtrl,
+                  distrito: _distritoCtrl,
+                  direccion: _direccionCtrl,
+                  referencia: _referenciaCtrl,
+                  tipoCliente: _tipoClienteCtrl,
+                  tipoPago: _tipoPagoCtrl,
+                  dias: _diasCtrl,
+                  igv: _igvCtrl,
+                  tipoDetraccion: _tipoDetraccionCtrl,
+                  plan: _planCtrl,
+                  extraDomDom: _extraDomDomCtrl,
+                  extraDomAge: _extraDomAgeCtrl,
+                  extraAgeDom: _extraAgeDomCtrl,
+                  celular: _celularCtrl,
+                  departamentos: config.departamentos.map((e) => e.departamento).toList(),
+                  provincias: config.provincias.map((e) => e.provincia).toList(),
+                  distritos: config.distritos.map((e) => e.distrito).toList(),
+                  tiposCliente: customer.customersType.map((e) => e.tipoCliente).toList(),
+                  detracciones: config.detracciones.map((e) => e.tipoDetraccion).toList(),
+                  planes: config.planes.map((e) => e.plan).toList(),
+                  tiposPago: config.tiposPago.map((e) => e.tipoPago).toList(),
+                  onDepartamentoChanged: _onDepartamentoChanged,
+                  onProvinciaChanged: _onProvinciaChanged,
+                  onDistritoChanged: _onDistritoChanged,
+                  onClienteEncontrado: _onClienteEncontrado,
+                ),
+      
+                const SizedBox(height: 20),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    style: AppButtonStyles.primary,
+                    onPressed: _submitNewCustomer,
+                    child: Text('Crear Cliente'),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

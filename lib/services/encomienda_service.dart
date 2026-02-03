@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:courier/core/api/api_client.dart';
 import 'package:courier/core/api/api_endpoints.dart';
 import 'package:courier/models/encomienda.dart';
@@ -30,6 +29,17 @@ class EncomiendaService {
       return tipos;
     } else {
       throw Exception('Error al obtener encomiendas');
+    }
+  }
+
+  Future<void> createEncomienda(Encomienda encomienda) async {
+    final response = await api.post(
+      ApiEndpoints.createEncomienda,
+      data: encomienda.toJson(),
+    );
+
+    if (response.statusCode != 200 && response.statusCode != 201) {
+      throw Exception('Error al registrar encomienda');
     }
   }
 

@@ -202,6 +202,8 @@ class _NuevoEstadoFormState extends State<_NuevoEstadoForm> {
                 child: const Text('Guardar estado', style: AppStyles.buttonWhiteText),
               ),
             ),
+
+            const SizedBox(height: AppSpacing.md)
           ],
         ),
       ),
