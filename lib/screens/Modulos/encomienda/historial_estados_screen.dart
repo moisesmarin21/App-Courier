@@ -1,8 +1,11 @@
+import 'dart:ffi';
+
 import 'package:courier/core/constants/buttons.dart';
 import 'package:courier/core/constants/colors.dart';
 import 'package:courier/core/constants/spacing.dart';
 import 'package:courier/core/constants/styles.dart';
 import 'package:courier/core/widgets/app_bar.dart';
+import 'package:courier/core/widgets/encomienda_header.dart';
 import 'package:courier/models/encomienda.dart';
 import 'package:courier/models/historialEstado.dart';
 import 'package:courier/providers/encomiendas_provider.dart';
@@ -27,8 +30,9 @@ class _HistorialEstadosScreenState extends State<HistorialEstadosScreen> {
   void initState() {
     super.initState();
     Future.microtask(() {
-      Provider.of<EncomiendasProvider>(context, listen: false).getHistorialEstados(widget.encomienda.id!);
-      Provider.of<EncomiendasProvider>(context, listen: false).getEstadosDisponibles(widget.encomienda.id!);
+      final idEncomienda = int.parse(widget.encomienda.id!);
+      Provider.of<EncomiendasProvider>(context, listen: false).getHistorialEstados(idEncomienda);
+      Provider.of<EncomiendasProvider>(context, listen: false).getEstadosDisponibles(idEncomienda);
     });
   }
 
@@ -45,7 +49,7 @@ class _HistorialEstadosScreenState extends State<HistorialEstadosScreen> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _EncomiendaHeader(encomienda: widget.encomienda),
+          EncomiendaHeader(encomienda: widget.encomienda),
           const Divider(height: 1),
           const SizedBox(height: AppSpacing.md),
           
@@ -140,7 +144,6 @@ class _NuevoEstadoFormState extends State<_NuevoEstadoForm> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Título
             const Text(
               'Cambiar estado',
               style: AppStyles.subtitleBlue
@@ -148,7 +151,6 @@ class _NuevoEstadoFormState extends State<_NuevoEstadoForm> {
 
             const SizedBox(height: 16),
 
-            // Select de estados
             DropdownButtonFormField<int>(
               decoration: const InputDecoration(
                 labelText: 'Nuevo estado',
@@ -170,7 +172,6 @@ class _NuevoEstadoFormState extends State<_NuevoEstadoForm> {
 
             const SizedBox(height: 12),
 
-            // Comentario
             TextFormField(
               controller: _comentarioCtrl,
               maxLines: 3,
@@ -183,7 +184,6 @@ class _NuevoEstadoFormState extends State<_NuevoEstadoForm> {
 
             const SizedBox(height: 20),
 
-            // Botón guardar
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
@@ -206,40 +206,6 @@ class _NuevoEstadoFormState extends State<_NuevoEstadoForm> {
             const SizedBox(height: AppSpacing.md)
           ],
         ),
-      ),
-    );
-  }
-}
-
-
-class _EncomiendaHeader extends StatelessWidget {
-  final Encomienda encomienda;
-
-  const _EncomiendaHeader({required this.encomienda});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Remito ${encomienda.serieRemito}',
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            'Origen: ${encomienda.agenciaOrigen}  •  Destino: ${encomienda.agenciaDestino}',
-            style: const TextStyle(
-              fontSize: 13,
-              color: Colors.grey,
-            ),
-          ),
-        ],
       ),
     );
   }

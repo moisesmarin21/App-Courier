@@ -1,8 +1,10 @@
 import 'package:courier/models/encomienda.dart';
 import 'package:courier/models/estado.dart';
 import 'package:courier/models/historialEstado.dart';
+import 'package:courier/models/image.dart';
 import 'package:courier/models/precioCalculo.dart';
 import 'package:courier/services/encomienda_service.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 class EncomiendasProvider extends ChangeNotifier {
@@ -10,10 +12,15 @@ class EncomiendasProvider extends ChangeNotifier {
 
   EncomiendasProvider(this._service);
 
+  
+  int? idSucursal;
+  String? fechaInicio;
+  String? fechaFin;
+
   List<Encomienda> _encomiendas = [];
   List<HistorialEstado> _historialEstados = [];
   List<Estado> _estadosDisponibles = [];
-  // List<PrecioCalculo> _precioCalculado = [];
+  List<Imagen> _imagenesEncomienda = [];
   PrecioCalculo? _precioCalculado;
   PrecioCalculo? get precioCalculado => _precioCalculado;
 
@@ -23,7 +30,7 @@ class EncomiendasProvider extends ChangeNotifier {
   List<Encomienda> get encomiendas => _encomiendas;
   List<HistorialEstado> get historialEstados => _historialEstados;
   List<Estado> get estadoDisponibles => _estadosDisponibles;
-  // List<PrecioCalculo> get precioCalculado => _precioCalculado;
+  List<Imagen> get imagenesEncomienda => _imagenesEncomienda;
 
   bool get isLoading => _isLoading;
   String? get error => _error;
@@ -31,6 +38,9 @@ class EncomiendasProvider extends ChangeNotifier {
   Future<void> getEncomiendas(int idSucursal, String fechaInicio, String fechaFin) async {
     _isLoading = true;
     _error = null;
+    this.idSucursal = idSucursal;
+    this.fechaInicio = fechaInicio;
+    this.fechaFin = fechaFin;
     notifyListeners();
 
     try {
@@ -59,7 +69,7 @@ class EncomiendasProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> getHistorialEstados(String idEncomienda) async {
+  Future<void> getHistorialEstados(int idEncomienda) async {
     _isLoading = true;
     _error = null;
     notifyListeners();
@@ -74,7 +84,7 @@ class EncomiendasProvider extends ChangeNotifier {
      }
   }
 
-  Future<void> getEstadosDisponibles(String idEncomienda) async {
+  Future<void> getEstadosDisponibles(int idEncomienda) async {
     _isLoading = true;
     _error = null;
     notifyListeners();
@@ -113,6 +123,52 @@ class EncomiendasProvider extends ChangeNotifier {
     } catch (e) {
       _precioCalculado = null;
       _error = e.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> getImagenesEncomienda(int idEncomienda) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      _imagenesEncomienda = await _service.getImagenesEncomienda(idEncomienda);
+    } catch (e) {
+      _error = e.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> asignarMotorizadosAEncomienda(int idEncomienda, int idMotorizado1, int idMotorizado2) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      await _service.asignarMotorizadosAEncomienda(idEncomienda, idMotorizado1, idMotorizado2);
+    } catch (e) {
+      _error = e.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> addImagenEncomienda(FormData formData) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      await _service.addImagenEncomienda(formData);
+    } catch (e) {
+      _error = e.toString();
+      rethrow;
     } finally {
       _isLoading = false;
       notifyListeners();

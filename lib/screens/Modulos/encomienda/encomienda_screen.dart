@@ -1,5 +1,6 @@
 // EncomiendasScreen.dart
 import 'package:courier/core/constants/app_dropdownButtonFormField.dart';
+import 'package:courier/core/constants/app_images.dart';
 import 'package:courier/core/constants/buttons.dart';
 import 'package:courier/core/constants/colors.dart';
 import 'package:courier/core/constants/spacing.dart';
@@ -26,19 +27,32 @@ class _EncomiendaScreenState extends State<EncomiendaScreen> {
   late final TextEditingController _fechaInicioCtrl;
   late final TextEditingController _fechaFinCtrl;
   int? _idSucursal;
+  final TextEditingController _searchCtrl = TextEditingController();
+  String _query = '';
+  String? _sucursalValue;
 
   @override
   void initState() {
     super.initState();
-
     _fechaActual = DateTime.now();
-    final hoyApi = DateFormat('yyyy-MM-dd').format(_fechaActual);
-
-    _fechaInicioCtrl = TextEditingController(text: hoyApi);
-    _fechaFinCtrl = TextEditingController(text: hoyApi);
+    _fechaInicioCtrl = TextEditingController();
+    _fechaFinCtrl = TextEditingController();
 
     Future.microtask(() {
       Provider.of<SucursalesProvider>(context, listen: false).fetchSucursales();
+      final sucursales = Provider.of<SucursalesProvider>(context, listen: false).sucursales;
+      final provider = Provider.of<EncomiendasProvider>(context, listen: false);
+
+      if (provider.fechaInicio != null) {
+        _fechaInicioCtrl.text = provider.fechaInicio!;
+        _fechaFinCtrl.text = provider.fechaFin!;
+        _idSucursal = provider.idSucursal;
+        _sucursalValue = sucursales.firstWhere((s) => s.id == _idSucursal).nombre;
+      } else {
+        final hoy = DateFormat('yyyy-MM-dd').format(_fechaActual);
+        _fechaInicioCtrl.text = hoy;
+        _fechaFinCtrl.text = hoy;
+      }
     });
   }
 
@@ -47,6 +61,7 @@ class _EncomiendaScreenState extends State<EncomiendaScreen> {
     _fechaInicioCtrl.dispose();
     _fechaFinCtrl.dispose();
     _sucursalCtrl.dispose();
+    _searchCtrl.dispose();
     super.dispose();
   }
 
@@ -99,6 +114,14 @@ class _EncomiendaScreenState extends State<EncomiendaScreen> {
     final sucursales = sucursalesProvider.sucursales;
     final encomiendasData = encomiendasProvider.encomiendas;
 
+    final listaFiltrada = encomiendasData.where((e) {
+      final q = _query.toLowerCase();
+      return e.serieRemito!.toLowerCase().contains(q) ||
+            e.remitente!.toLowerCase().contains(q) ||
+            e.destinatario!.toLowerCase().contains(q) ||
+            e.ultimoEstado!.toLowerCase().contains(q);
+    }).toList();
+
     return Scaffold(
       appBar: CustomAppBar(
         title: 'Listado de Encomiendas',
@@ -130,13 +153,6 @@ class _EncomiendaScreenState extends State<EncomiendaScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Filtrar por:',
-              style: TextStyle(fontWeight: FontWeight.w600),
-            ),
-
-            const SizedBox(height: AppSpacing.lg),
-            
             Row(
               children: [
                 Expanded(
@@ -226,6 +242,7 @@ class _EncomiendaScreenState extends State<EncomiendaScreen> {
                     children: [
                       AppDropdownbuttonformfield(
                         controller: _sucursalCtrl,
+                        value: _sucursalValue,
                         options: sucursales.map((e) => e.nombre).toList(),
                         onChanged: (value) {
                           final sucursalSeleccionada = sucursales.firstWhere(
@@ -297,19 +314,56 @@ class _EncomiendaScreenState extends State<EncomiendaScreen> {
             
             const Divider(height: 24, thickness: 1, color: Colors.grey),
 
+            SizedBox(
+              height: 34,
+              child: TextField(
+                controller: _searchCtrl,
+                onChanged: (val) {
+                  setState(() {
+                    _query = val;
+                  });
+                },
+                decoration: InputDecoration(
+                  isDense: true,
+                  hintText: 'Buscar por serie, remitente o destinatario',
+                  hintStyle: AppStyles.labelSmall,
+                  filled: true,
+                  fillColor: const Color(0xFFECEFF1),
+                  prefixIcon: const Icon(Icons.search, size: 16),
+                  suffixIcon: _query.isNotEmpty
+                      ? IconButton(
+                          icon: const Icon(Icons.clear, size: 16),
+                          onPressed: () {
+                            _searchCtrl.clear();
+                            setState(() => _query = '');
+                            FocusScope.of(context).unfocus();
+                          },
+                        )
+                      : null,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+                style: AppStyles.labelSmall,
+              ),
+            ),
+
+            const SizedBox(height: 12),
+
             Expanded(
               child: encomiendasData.isEmpty
                   ? Center(
                       child: Text(
-                        'No hay datos', style: AppStyles.label,
+                        'No se encontraron encomiendas', style: AppStyles.label,
                       ),
                     )
                   : ListView.separated(
                       padding: EdgeInsets.zero,
-                      itemCount: encomiendasData.length,
+                      itemCount: listaFiltrada.length,
                       separatorBuilder: (_, __) => const SizedBox(height: 12),
                       itemBuilder: (context, index) {
-                        final encomienda = encomiendasData[index];
+                        final encomienda = listaFiltrada[index];
                         return _EncomiendaCard(encomienda: encomienda);
                       },
                     ),
@@ -429,8 +483,29 @@ class _EncomiendaCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 IconButton(
-                  onPressed: (){}, 
+                  onPressed: (){
+                    Navigator.pushNamed(
+                      context,
+                      '/imagenesEncomienda',
+                      arguments: encomienda,
+                    );
+                  }, 
                   icon: Icon(Icons.photo_library, color: AppColors.primary)
+                ),
+                IconButton(
+                  icon: Image.asset(
+                    AppImages.asignarMotorizado,
+                    width: 26,
+                    height: 26,
+                    color: AppColors.primary,
+                  ),
+                  onPressed: (){
+                    Navigator.pushNamed(
+                      context,
+                      '/asignarMotorizado',
+                      arguments: encomienda,
+                    );
+                  },
                 ),
                 Text(
                   'Fecha: ${encomienda.fechaEntrega}',

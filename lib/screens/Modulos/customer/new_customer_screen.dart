@@ -168,13 +168,13 @@ class _NewCustomerScreenState extends State<NewCustomerScreen> {
 
   void _onClienteEncontrado(InfoByDocument user) async {
     final config = context.read<ConfiguracionesProvider>();
-    _razonSocialCtrl.text = user.razonSocial ?? '';
+    _razonSocialCtrl.text = user.razonSocial;
     _departamentoValue = user.departamento;
     _provinciaValue = user.provincia;
     _distritoValue = user.distrito;
-    _departamentoCtrl.text = user.departamento ?? '';
-    _provinciaCtrl.text = user.provincia ?? '';
-    _distritoCtrl.text = user.distrito ?? '';
+    _departamentoCtrl.text = user.departamento;
+    _provinciaCtrl.text = user.provincia;
+    _distritoCtrl.text = user.distrito;
 
     final dep = config.departamentos.firstWhereOrNull(
       (d) => d.departamento == user.departamento,

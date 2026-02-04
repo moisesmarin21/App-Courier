@@ -182,7 +182,7 @@ class _EditCustomerScreenState extends State<EditCustomerScreen> {
   }
 
   void _initControllers(Customer c, ConfiguracionesProvider config) {
-    _nroDocumentoCtrl = TextEditingController(text: c.nroDocumento ?? '');
+    _nroDocumentoCtrl = TextEditingController(text: c.nroDocumento);
     _razonSocialCtrl = TextEditingController(text: c.nombres ?? '');
 
     _departamentoValue = c.departamentoNombre;
@@ -199,11 +199,11 @@ class _EditCustomerScreenState extends State<EditCustomerScreen> {
     final seen = <String>{};
 
     direcciones = c.direcciones
-        .where((d) => d.direccion != null && d.direccion!.trim().isNotEmpty)
-        .where((d) => seen.add(d.direccion!.trim()))
+        .where((d) => d.direccion.trim().isNotEmpty)
+        .where((d) => seen.add(d.direccion.trim()))
         .map(
           (d) => Direccion(
-            direccion: d.direccion!.trim(),
+            direccion: d.direccion.trim(),
             referencia: d.referencia?.trim(),
           ),
         )
@@ -299,15 +299,15 @@ class _EditCustomerScreenState extends State<EditCustomerScreen> {
   void _onClienteEncontrado(InfoByDocument user) async {
     final config = context.read<ConfiguracionesProvider>();
 
-    _razonSocialCtrl.text = user.razonSocial ?? '';
+    _razonSocialCtrl.text = user.razonSocial;
 
     _departamentoValue = user.departamento;
     _provinciaValue = user.provincia;
     _distritoValue = user.distrito;
 
-    _departamentoCtrl.text = user.departamento ?? '';
-    _provinciaCtrl.text = user.provincia ?? '';
-    _distritoCtrl.text = user.distrito ?? '';
+    _departamentoCtrl.text = user.departamento;
+    _provinciaCtrl.text = user.provincia;
+    _distritoCtrl.text = user.distrito;
 
     if (user.departamento == null) {
       setState(() {});

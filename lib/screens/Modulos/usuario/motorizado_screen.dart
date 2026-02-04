@@ -20,6 +20,7 @@ class MotorizadosScreen extends StatefulWidget {
 class _MotorizadosScreenState extends State<MotorizadosScreen> {
   final TextEditingController _sucursalCtrl = TextEditingController();
   int? _idSucursal;
+  String? _sucursalValue;
 
   @override
   void initState() {
@@ -27,6 +28,9 @@ class _MotorizadosScreenState extends State<MotorizadosScreen> {
 
     Future.microtask(() {
       Provider.of<SucursalesProvider>(context, listen: false).fetchSucursales();
+      final sucursales = Provider.of<SucursalesProvider>(context, listen: false).sucursales;
+      final provider = Provider.of<UsersProvider>(context, listen: false);
+      _sucursalValue = sucursales.firstWhere((s) => s.id == provider.idSucursal).nombre;
     });
   }
 
@@ -77,6 +81,7 @@ class _MotorizadosScreenState extends State<MotorizadosScreen> {
                   flex: 7,
                   child: AppDropdownbuttonformfield(
                     controller: _sucursalCtrl,
+                    value: _sucursalValue,
                     options: sucursales.map((e) => e.nombre).toList(),
                     hintText: 'Selecciona sucursal',
                     onChanged: (value) {

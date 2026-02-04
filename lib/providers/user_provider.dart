@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 class UsersProvider extends ChangeNotifier {
   final UserService _service;
 
+  int? idSucursal;
+
   UsersProvider(this._service);
 
   List<Motorizado> _motorizados = [];
@@ -20,6 +22,7 @@ class UsersProvider extends ChangeNotifier {
   Future<void> getMotorizados(int idSucursal) async {
     _isLoading = true;
     _error = null;
+    this.idSucursal = idSucursal;
     notifyListeners();
 
     try {

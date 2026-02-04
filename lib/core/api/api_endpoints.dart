@@ -30,6 +30,9 @@ class ApiEndpoints {
   static const String estadoDisponibles = '/encomienda/getEstadosDisponibles';
   static const String newEstado = '/encomienda/addEstadoEncomienda';
   static const String calcularPrecio = '/encomienda/calcularPrecio';
+  static const String llamarImagenes = '/encomienda/getImagenesEncomienda';
+  static const String agregarImagen = '/encomienda/addImagenEncomienda';
+  static const String asignarMotorizados = '/encomienda/addMotorizados';
   
   // Configuraciones
   static const String detraccionsType = '/configuraciones/getDetracciones';

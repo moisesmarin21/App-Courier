@@ -49,6 +49,7 @@ class AppStyles {
     fontSize: 14,
     fontWeight: FontWeight.w400,
     fontFamily: 'Montserrat',
+    color: AppColors.textPrimary,
   );
 
   static const TextStyle labelBlocked = TextStyle(

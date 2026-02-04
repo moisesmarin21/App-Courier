@@ -1,5 +1,7 @@
 import 'package:courier/models/customer.dart';
 import 'package:courier/models/encomienda.dart';
+import 'package:courier/screens/Modulos/encomienda/asignar_motorizado_screen.dart';
+import 'package:courier/screens/Modulos/encomienda/imagen_encomienda_screen.dart';
 import 'package:courier/screens/Modulos/encomienda/new_encomienda_screen.dart';
 import 'package:courier/screens/Modulos/customer/edit_customer_screen.dart';
 import 'package:courier/screens/Modulos/customer/new_customer_screen.dart';
@@ -25,6 +27,8 @@ class AppRoutes {
 
   static const String newEncomienda = '/newEncomienda';
   static const String historialEstados = '/historialEstados';
+  static const String imagenesEncomienda = '/imagenesEncomienda';
+  static const String asignarMotorizado = '/asignarMotorizado';
 
   // Mapa de rutas
   static Map<String, WidgetBuilder> routes = {
@@ -36,18 +40,24 @@ class AppRoutes {
     customerModule: (context) => ModulesCustomer(),
     newCustomer: (context) => NewCustomerScreen(),
     editCustomer: (context) {
-      final customer =
-          ModalRoute.of(context)!.settings.arguments as Customer;
-
+      final customer = ModalRoute.of(context)!.settings.arguments as Customer;
       return EditCustomerScreen(customer: customer);
     },
 
     newEncomienda: (context) => NewEncomiendaScreen(),
     historialEstados: (context) {
-      final encomienda =
-          ModalRoute.of(context)!.settings.arguments as Encomienda;
-
+      final encomienda = ModalRoute.of(context)!.settings.arguments as Encomienda;
       return HistorialEstadosScreen(encomienda: encomienda);
+    },
+
+    imagenesEncomienda: (context) {
+      final encomienda = ModalRoute.of(context)!.settings.arguments as Encomienda;
+      return ImagenEncomiendaScreen(encomienda: encomienda);
+    },
+
+    asignarMotorizado: (context) {
+      final encomienda = ModalRoute.of(context)!.settings.arguments as Encomienda;
+      return AsignarMotorizadosScreen(encomienda: encomienda);
     },
   };
 }

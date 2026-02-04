@@ -8,7 +8,8 @@ class AppImages {
   static const String barchart = 'assets/images/barchart.png';
   static const String customer = 'assets/images/customer.png';
   static const String courier = 'assets/images/package.png';
-  static const String motorizado = 'assets/images/motorizado.png';
+  static const String motorizado = 'assets/images/delivery.png';
+  static const String asignarMotorizado = 'assets/images/motorizado.png';
   static const String estados = 'assets/images/estados.png';
 
   static const String profile = 'assets/images/profile.png';

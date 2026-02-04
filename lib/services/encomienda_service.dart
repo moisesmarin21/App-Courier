@@ -4,7 +4,9 @@ import 'package:courier/core/api/api_endpoints.dart';
 import 'package:courier/models/encomienda.dart';
 import 'package:courier/models/estado.dart';
 import 'package:courier/models/historialEstado.dart';
+import 'package:courier/models/image.dart';
 import 'package:courier/models/precioCalculo.dart';
+import 'package:dio/dio.dart';
 
 class EncomiendaService {
   final ApiClient api;
@@ -43,7 +45,7 @@ class EncomiendaService {
     }
   }
 
-  Future<List<HistorialEstado>> getHistorialEstados(String idEncomienda) async {
+  Future<List<HistorialEstado>> getHistorialEstados(int idEncomienda) async {
     final response = await api.get(
       '${ApiEndpoints.historialEstados}?id_encomienda=$idEncomienda',
     );
@@ -63,7 +65,7 @@ class EncomiendaService {
     }
   }
 
-  Future<List<Estado>> getEstadosDisponibles(String idEncomienda) async {
+  Future<List<Estado>> getEstadosDisponibles(int idEncomienda) async {
     final response = await api.get(
       '${ApiEndpoints.estadoDisponibles}?id_encomienda=$idEncomienda',
     );
@@ -117,5 +119,58 @@ class EncomiendaService {
         : response.data as Map<String, dynamic>;
 
     return PrecioCalculo.fromJson(body);
+  }
+
+  Future<List<Imagen>> getImagenesEncomienda(int idEncomienda) async {
+    final response = await api.get(
+      '${ApiEndpoints.llamarImagenes}?id_encomienda=$idEncomienda',
+    );
+
+    if (response.statusCode == 200) {
+      final body = response.data is String
+          ? jsonDecode(response.data)
+          : response.data as Map<String, dynamic>;
+
+      final List<dynamic> lista = body['data'] ?? [];
+
+      final imagenes = lista
+          .map((e) => Imagen.fromJson(e)).toList();
+
+      return imagenes;
+    } else {
+      throw Exception('Error al obtener imagenes de encomienda');
+    }
+  }
+
+  Future<void> asignarMotorizadosAEncomienda(int idEncomienda, int idMotorizado1, int idMotorizado2) async {
+    final response = await api.post(
+      ApiEndpoints.asignarMotorizados,
+      data: {
+        "id_encomienda": idEncomienda,
+        "id_motorizado_1": idMotorizado1,
+        "id_motorizado_2": idMotorizado2
+      },
+    );
+
+    if (response.statusCode != 200 && response.statusCode != 201) {
+      throw Exception('Error al asignar motorizados a encomienda');
+    }
+  }
+
+  Future<void> addImagenEncomienda(FormData formData) async {
+    final response = await api.post(
+      ApiEndpoints.agregarImagen,
+      data: formData,
+      options: Options(
+        headers: {'Content-Type': 'multipart/form-data'},
+      ),
+    );
+
+    print('Status code: ${response.statusCode}');
+    print('Data: ${response.data}');
+
+    if (response.statusCode != 200 && response.statusCode != 201) {
+      throw Exception('Error al agregar imagen de encomienda');
+    }
   }
 }

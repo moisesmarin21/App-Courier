@@ -1,4 +1,3 @@
-import 'package:courier/core/constants/styles.dart';
 import 'package:courier/core/utils/exit_confirmation.dart';
 import 'package:courier/core/widgets/app_bar.dart';
 import 'package:courier/core/widgets/encomienda_form.dart';

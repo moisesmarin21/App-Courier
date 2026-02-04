@@ -432,7 +432,7 @@ class _EncomiendaFormState extends State<EncomiendaForm> {
     _onTipoPagoChanged(clienteDetalle.tipoPago);
 
     /// UBICACIÓN
-    if (tipoEntrega == 4 || tipoEntrega == 2) {
+    if (tipoEntrega == 4 || tipoEntrega == 1) {
       final dep = clienteDetalle.departamentoNombre;
       final prov = clienteDetalle.provinciaNombre;
       final dist = clienteDetalle.distritoNombre;
